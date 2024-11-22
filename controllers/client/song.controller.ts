@@ -151,7 +151,9 @@ export const favorite = async (req: Request, res: Response) => {
 }
 
 export const search = async (req: Request, res: Response) => {
-  const keyword = `${req.query.keyword}`;
+  const type = req.params.type
+  if(type == "result"){
+    const keyword = `${req.query.keyword}`;
 
   let keywordRegex = keyword.trim();
   keywordRegex = unidecode(keywordRegex.replace(/\s+/g, "-"))
@@ -172,4 +174,7 @@ export const search = async (req: Request, res: Response) => {
     keyword: keyword,
     songs: songs
   })
+  }
+  
 }
+

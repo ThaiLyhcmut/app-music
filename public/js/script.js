@@ -85,3 +85,16 @@ if(listButtonFavorite.length > 0) {
   })
 }
 // het tinh nang yeu thich
+
+// Gợi ý tìm kiếm
+const boxSearch = document.querySelector(".box-search");
+if(boxSearch){
+  const input = boxSearch.querySelector(`input[name="keyword"]`)
+  input.addEventListener("keyup", () => {
+    const keyword = input.value
+    fetch(`/song/search/sugget?keyword${keyword}`, {
+      
+    })
+  })
+}
+// hết gợi ý tìm kiếm
