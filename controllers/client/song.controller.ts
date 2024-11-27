@@ -152,9 +152,8 @@ export const favorite = async (req: Request, res: Response) => {
 
 export const search = async (req: Request, res: Response) => {
   const type = req.params.type
-  if(type == "result"){
-    const keyword = `${req.query.keyword}`;
-
+  const songFinal = []
+  const keyword = `${req.query.keyword}`;
   let keywordRegex = keyword.trim();
   keywordRegex = unidecode(keywordRegex.replace(/\s+/g, "-"))
   const slugRegex = new RegExp(keywordRegex, "i")
@@ -167,14 +166,49 @@ export const search = async (req: Request, res: Response) => {
       deleted: false
     });
     song["singerFullName"] = infoSinger ? infoSinger.fullName : "";
+    songFinal.push({
+      id: song.id,
+      slug: song.slug,
+      avatar: song.avatar,
+      title: song.title,
+      like: song.like,
+      singerId: song.singerId,
+      singerFullName: song["singerFullName"],
+    })
+  }
+  if(type == "result"){
+    res.render("client/page/songs/search", {
+      pageTitle: `Trang ket qua tim kiem: ${keyword}`,
+      keyword: keyword,
+      songs: songFinal
+    })
+  }
+  else if(type == "suggest"){
+    res.json({
+      songs: songFinal
+    })
   }
 
-  res.render("client/page/songs/search", {
-    pageTitle: `Trang ket qua tim kiem: ${keyword}`,
-    keyword: keyword,
-    songs: songs
-  })
-  }
-  
 }
 
+export const listenPatch = async (req: Request, res: Response) => {
+  const id = req.params.id
+  const song = await Song.findOne({
+    _id: id,
+    deleted: false,
+    status: "active"
+  })
+
+  await Song.updateOne({
+    _id: id,
+    deleted: false,
+    status: "active"
+  },{
+    listen: song.listen + 1
+  })
+
+  res.json({
+    code: "success",
+    listen: song.listen + 1
+  })
+}

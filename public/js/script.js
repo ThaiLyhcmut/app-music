@@ -24,6 +24,16 @@ if(aplayer) {
   ap.on('pause', () => {
     avatar.style.animationPlayState = "paused"
   })
+  ap.on('ended', () => {
+    fetch(`/songs/listen/${dataSong._id}`, {
+      method: "PATCH",
+    }).then(res => res.json())
+      .then(data => {
+        if(data.code == "success"){
+          document.querySelector(".singer-detail .inner-listen span").innerHTML = data.listen
+        }
+      })
+  })
 }
 // End Aplayer
 
@@ -90,11 +100,35 @@ if(listButtonFavorite.length > 0) {
 const boxSearch = document.querySelector(".box-search");
 if(boxSearch){
   const input = boxSearch.querySelector(`input[name="keyword"]`)
+  const innerSuggest = boxSearch.querySelector(".inner-suggest")
+  const innerList = boxSearch.querySelector(".inner-list")
   input.addEventListener("keyup", () => {
     const keyword = input.value
-    fetch(`/song/search/sugget?keyword${keyword}`, {
-      
-    })
+    fetch(`/songs/search/suggest?keyword=${keyword}`)
+      .then(res => res.json())
+      .then(data => {
+        if(data.songs.length > 0){
+          const htmls = data.songs.map((item, index) => 
+            `<a class="inner-item" href="/songs/detail/${item.slug}">
+                <div class="inner-image">
+                  <img src="${item.avatar}">
+                </div>
+                <div class="inner-info">
+                  <div class="inner-title">${item.title}</div>
+                  <div class="inner-singer">
+                    <i class="fa-solid fa-microphone-lines"></i> ${item.singerFullName}
+                  </div>
+                </div>
+              </a>
+            ` 
+          )
+          innerSuggest.classList.add("show");
+          innerList.innerHTML = htmls.join("");
+        }else{
+          innerSuggest.classList.remove("show");
+          innerList.innerHTML = "";
+        }
+      })
   })
 }
 // hết gợi ý tìm kiếm
