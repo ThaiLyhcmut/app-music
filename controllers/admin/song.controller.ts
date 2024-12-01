@@ -47,7 +47,7 @@ export const edit = async (req: Request, res: Response) => {
   const singers = await Singer.find({
     deleted: false
   }).select("fullName");
-  res.render("admin/pages/songs/edit", {
+  res.render("admin/page/songs/edit", {
     pageTitle: "Chỉnh sửa bài hát",
     song: song,
     topics: topics,
