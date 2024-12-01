@@ -1,20 +1,30 @@
 import mongoose from "mongoose";
+import slug from "mongoose-slug-updater";
+mongoose.plugin(slug);
+
 const songSchema = new mongoose.Schema(
   {
     title: String,
+    slug: {
+      type: String,
+      slug: "title",
+      unique: true
+    },
     avatar: String,
     description: String,
     singerId: String,
     topicId: String,
-    like: Number,
     listen: {
       type: Number,
       default: 0,
     },
+    like: {
+      type: Number,
+      default: 0
+    },
     lyrics: String,
     audio: String,
     status: String,
-    slug: String,
     deleted: {
       type: Boolean,
       default: false,
